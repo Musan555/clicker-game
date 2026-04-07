@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Clicker Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header id="top-bar">
+    <span id="coins">0</span> $
+</header>
+
+<div id="game-container">
+    <div id="center-area">
+        <button id="coin-button">💰</button>
+    </div>
+
+    <aside id="right-panel">
+        <div id="tabs">
+            <button class="tab-button active" onclick="showTab('upgrades-tab')">Mejoras</button>
+            <button class="tab-button" onclick="showTab('stats-tab')">Estadísticas</button>
+        </div>
+
+        <div id="upgrades-tab" class="tab-content active">
+            <h2>Mejoras</h2>
+            <div id="upgrade-list"></div>
+        </div>
+
+        <div id="stats-tab" class="tab-content">
+            <h2>Estadísticas</h2>
+            <p>Total Clicks: <span id="stat-clicks">0</span></p>
+            <p>Coins/s: <span id="stat-cps">0</span></p>
+            <p>Total Coins: <span id="stat-total">0</span></p>
+        </div>
+    </aside>
+</div>
+
+<div id="prestige-container">
+    <div id="prestige-info">
+        Prestige Points: <span id="prestigePoints">0</span>
+        Skill Points: <span id="prestige-skill-points">0</span>
+        Next: <span id="prestigeRequirement">0</span>
+        <button id="prestige-button">Prestige</button>
+    </div>
+
+    <div id="prestige-progress-container">
+        <div id="prestige-progress"></div>
+    </div>
+</div>
+
+<!-- Botón y panel de logros -->
+<div id="achievement-button">🏆</div>
+<div id="achievement-panel" class="hidden"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

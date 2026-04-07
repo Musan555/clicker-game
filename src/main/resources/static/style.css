@@ -1,0 +1,194 @@
+body{
+    margin:0;
+    font-family:Arial;
+    background:#1e1e1e;
+    color:white;
+}
+
+/* BARRA SUPERIOR */
+#top-bar{
+    text-align:center;
+    font-size:30px;
+    padding:10px;
+    background:#111;
+}
+
+/* CONTENEDOR PRINCIPAL */
+#game-container{
+    display:flex;
+    height:calc(100vh - 150px);
+    padding-bottom:40px;
+}
+
+/* CENTRO */
+#center-area{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
+
+#coin-button{
+    font-size:70px;
+    padding:50px;
+    border-radius:50%;
+    background:gold;
+    border:none;
+    cursor:pointer;
+}
+
+/* PANEL DERECHO */
+#right-panel{
+    width:320px;
+    background:#2a2a2a;
+    display:flex;
+    flex-direction:column;
+}
+
+/* TABS */
+#tabs{
+    display:flex;
+}
+
+.tab-button{
+    flex:1;
+    padding:10px;
+    background:#333;
+    border:none;
+    color:white;
+    cursor:pointer;
+}
+
+.tab-button.active{
+    background:#555;
+}
+
+/* CONTENIDO TABS */
+.tab-content{
+    display:none;
+    padding:10px;
+    flex:1;
+    overflow:hidden;
+}
+
+.tab-content.active{
+    display:block;
+}
+
+/* MEJORAS */
+#upgrade-list{
+    height:100%;
+    overflow-y:auto;
+}
+
+.upgrade{
+    background:#333;
+    margin-bottom:10px;
+    padding:10px;
+    border-radius:5px;
+}
+
+/* PRESTIGE */
+#prestige-container{
+    position:fixed;
+    bottom:10px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    z-index:5;
+}
+
+/* INFO */
+#prestige-info{
+    font-size:14px;
+    margin-bottom:4px;
+}
+
+/* BARRA */
+#prestige-progress-container{
+    width:280px;
+    height:18px;
+    background:#333;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+#prestige-progress{
+    height:100%;
+    width:0%;
+    background:gold;
+    transition:width 0.3s;
+}
+
+/* SKILLS */
+#skill-tree-container{
+    padding:20px;
+}
+
+#skill-tree{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.skill{
+    background:#333;
+    padding:10px;
+    text-align:center;
+    border-radius:6px;
+}
+
+/* BOTON LOGROS */
+#achievement-button {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* PANEL DE LOGROS */
+#achievement-panel {
+    position: fixed;
+    bottom: 60px;
+    left: 10px;
+    width: 300px;
+    max-height: 400px;
+    background: #2a2a2a;
+    color: white;
+    border: 2px solid gold;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    z-index: 15;
+}
+
+/* NOTIFICACIÓN DE LOGRO */
+.achievement-toast{
+    position: fixed;
+    bottom: 60px;
+    left: 10px;
+    background: gold;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+    z-index: 20;
+}
+
+.achievement-toast.visible{
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* CLASE OCULTA */
+.hidden{
+    display:none !important;
+}
