@@ -1,7 +1,5 @@
 package com.musan.clickergame.model;
 
-import com.musan.clickergame.model.SkillTree;
-import com.musan.clickergame.model.Upgrade;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -57,9 +55,9 @@ public class Player {
 
         this.skillTree = new SkillTree();
 
-        // 🔥 INICIALIZAR LOGROS
+        // 🔥 INICIALIZAR LOGROS (ESTO ES CLAVE)
         for (AchievementType type : AchievementType.values()) {
-            achievements.add(new Achievement(type));
+            this.achievements.add(new Achievement(type));
         }
     }
 
@@ -94,9 +92,7 @@ public class Player {
         return achievements;
     }
 
-    public void setAchievements(List<Achievement> achievements) {
-        this.achievements = achievements;
-    }
+    // ❌ ELIMINAMOS setAchievements (NO SE USA)
 
     // --- GETTERS Y SETTERS ---
 

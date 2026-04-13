@@ -3,15 +3,17 @@ package com.musan.clickergame.model;
 public enum AchievementType {
 
     FIRST_CLICK("first_click", "Primer Click", "Has hecho tu primer click"),
-    TEN_THOUSAND_COINS("10k_coins", "Acumulador", "Has alcanzado 10.000 monedas"),
-    HUNDRED_THOUSAND_COINS("100k_coins", "Millonario Inicial", "Has alcanzado 100.000 monedas"),
+    TEN_THOUSAND_COINS("10k_coins", "Curioso del dinero", "Has alcanzado 10.000 monedas"),
     MILLION_COINS("1m_coins", "Millonario", "Has alcanzado 1.000.000 monedas"),
-    FIVE_MILLION_COINS("5m_coins", "Magnate", "Has alcanzado 5.000.000 monedas"),
-    TEN_MILLION_COINS("10m_coins", "Tycoon", "Has alcanzado 10.000.000 monedas"),
+    BILLION_COINS("1b_coins", "Empresario loco", "Has alcanzado 1.000.000.000 monedas"),
+    TRILLION_COINS("1t_coins", "Tocando el cielo", "Has alcanzado 1.000.000.000.000 monedas"),
+    QUADRILLION_COINS("1q_coins", "Rompe-economías", "Has alcanzado 1.000.000.000.000.000 monedas"),
     FIRST_PRESTIGE_POINT("first_prestige", "Prestigioso", "Has obtenido tu primer punto de prestigio"),
-    UPGRADE_MASTER("upgrade_master", "Maestro de mejoras", "Has comprado 50 upgrades"),
-    SKILL_TREE_BEGINNER("skill_tree_beginner", "Aprendiz de Habilidades", "Has desbloqueado tu primera skill"),
-    SKILL_TREE_EXPERT("skill_tree_expert", "Experto de Habilidades", "Has desbloqueado todas las skills del árbol");
+    UPGRADE_BEGINNER("upgrade_beginner", "Manitas", "Has comprado 1 mejora"),
+    UPGRADE_HALF("upgrade_half", "Mitad del camino", "Has comprado el 50% de las mejoras"),
+    UPGRADE_MASTER("upgrade_master", "Maestro de mejoras", "Has mejorado todas las upgrades al máximo"),
+    SKILL_TREE_BEGINNER("skill_tree_beginner", "Aprendiz arcano", "Has desbloqueado tu primera skill"),
+    SKILL_TREE_EXPERT("skill_tree_expert", "Maestro del árbol", "Has completado todas las skills del árbol");
 
     private final String id;
     private final String name;

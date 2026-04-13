@@ -40,6 +40,7 @@ async function loadGameState(){
     document.getElementById("coins").textContent = formatNumber(player.currentCoins);
     document.getElementById("prestigePoints").textContent = player.prestigePoints;
     document.getElementById("prestigeRequirement").textContent = formatNumber(player.prestigeRequirement);
+
     if(player.skillTree){
         document.getElementById("prestige-skill-points").textContent = player.skillTree.availablePrestigePoints;
     }
@@ -51,7 +52,8 @@ async function loadGameState(){
     }
     percent = Math.min(percent,100);
     if(player.coinsThisRun === 0) percent = 0;
-    document.getElementById("prestige-progress").style.width = percent+"%";
+
+    document.getElementById("prestige-progress").style.width = percent + "%";
 
     const prestigeBtn = document.getElementById("prestige-button");
     if(player.coinsThisRun >= player.prestigeRequirement){
@@ -59,36 +61,39 @@ async function loadGameState(){
     } else {
         prestigeBtn.classList.remove("active");
     }
+}
 
-    // --- Logros ---
-    if(player.achievements){
-        achievementPanel.innerHTML = ""; // limpiar panel
+// --- LOGROS (NUEVO: LLAMADA SEPARADA) ---
+async function loadAchievements(){
+    const response = await fetch("/api/game/achievements");
+    const achievements = await response.json();
 
-        player.achievements.forEach(a => {
+    achievementPanel.innerHTML = "";
 
-            const id = a.type.id;
-            const name = a.type.name;
-            const description = a.type.description;
+    achievements.forEach(a => {
 
-            // Toast
-            if(a.unlocked && !unlockedAchievements.has(id)){
-                unlockedAchievements.add(id);
-                achievementAudio.currentTime = 0;
-                achievementAudio.play();
-                showAchievementToast(name, description);
-            }
+        const id = a.name;
+        const name = a.name;
+        const description = a.description;
 
-            // Panel logros
-            const div = document.createElement("div");
-            div.innerHTML = `
-                <b>${name}</b><br>
-                ${description}<br>
-                Status: ${a.unlocked ? "✅" : "❌"}
-                <hr>
-            `;
-            achievementPanel.appendChild(div);
-        });
-    }
+        // Toast
+        if(a.unlocked && !unlockedAchievements.has(id)){
+            unlockedAchievements.add(id);
+            achievementAudio.currentTime = 0;
+            achievementAudio.play();
+            showAchievementToast(name, description);
+        }
+
+        // Panel
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <b>${name}</b><br>
+            ${description}<br>
+            Status: ${a.unlocked ? "✅" : "❌"}
+            <hr>
+        `;
+        achievementPanel.appendChild(div);
+    });
 }
 
 // --- Click ---
@@ -103,18 +108,19 @@ async function prestige(){
     await fetch("/api/game/prestige",{method:"POST"});
     window.location.href = "skill-tree.html";
 }
-document.getElementById("prestige-button").addEventListener("click",prestige);
+document.getElementById("prestige-button").addEventListener("click", prestige);
 
 // --- Upgrades ---
 async function loadUpgrades(){
     const response = await fetch("/api/upgrades");
     const upgrades = await response.json();
     const container = document.getElementById("upgrade-list");
-    container.innerHTML="";
+    container.innerHTML = "";
+
     upgrades.forEach((u,index)=>{
         const div = document.createElement("div");
-        div.className="upgrade";
-        div.innerHTML=`
+        div.className = "upgrade";
+        div.innerHTML = `
             <b>${u.name}</b><br>
             Nivel: ${u.level}/${u.maxLevel}<br>
             Precio: ${formatNumber(u.cost)} $<br>
@@ -134,13 +140,16 @@ async function buyUpgrade(index){
 async function loadSkills(){
     const container = document.getElementById("skill-tree");
     if(!container) return;
+
     const response = await fetch("/api/game/skills");
     const skills = await response.json();
-    container.innerHTML="";
+
+    container.innerHTML = "";
+
     skills.forEach((s,index)=>{
         const div = document.createElement("div");
-        div.className="skill";
-        div.innerHTML=`
+        div.className = "skill";
+        div.innerHTML = `
             <b>${s.name}</b><br>
             ${s.description}<br>
             Nivel: ${s.level}/${s.maxLevel}<br>
@@ -159,11 +168,14 @@ async function buySkill(index){
 
 // --- Tabs ---
 function showTab(tabId){
-    document.querySelectorAll(".tab-content").forEach(tab=>tab.classList.remove("active"));
-    document.querySelectorAll(".tab-button").forEach(btn=>btn.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
+    document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
+
     document.getElementById(tabId).classList.add("active");
+
     const btn = Array.from(document.querySelectorAll(".tab-button"))
-        .find(b=>b.getAttribute("onclick").includes(tabId));
+        .find(b => b.getAttribute("onclick").includes(tabId));
+
     if(btn) btn.classList.add("active");
 }
 
@@ -171,5 +183,6 @@ function showTab(tabId){
 loadGameState();
 loadUpgrades();
 loadSkills();
-setInterval(loadGameState,1000);
-
+loadAchievements();
+setInterval(loadGameState, 1000);
+setInterval(loadAchievements, 1000);

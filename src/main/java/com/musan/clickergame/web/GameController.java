@@ -3,6 +3,7 @@ package com.musan.clickergame.web;
 import com.musan.clickergame.model.Player;
 import com.musan.clickergame.model.Skill;
 import com.musan.clickergame.model.Upgrade;
+import com.musan.clickergame.model.dto.AchievementDTO;
 import com.musan.clickergame.service.GameService;
 
 import org.springframework.web.bind.annotation.*;
@@ -60,4 +61,9 @@ public class GameController {
         return gameService.getPlayerData().getSkillTree().getSkills();
     }
 
+    // 🔥 NUEVO ENDPOINT DE LOGROS (CLAVE)
+    @GetMapping("/achievements")
+    public List<AchievementDTO> getAchievements() {
+        return gameService.getAchievements();
+    }
 }

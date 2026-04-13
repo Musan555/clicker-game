@@ -123,6 +123,7 @@ public class UpgradeService {
 
         upgrade.levelUp();
 
+        player.addUpgrade(upgrade);
         // 🔥 IMPORTANTE: recalcular TODO después de subir nivel
         applyUpgradeEffect(player);
 
