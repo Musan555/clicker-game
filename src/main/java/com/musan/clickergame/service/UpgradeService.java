@@ -159,4 +159,26 @@ public class UpgradeService {
         // 🔥 MUY IMPORTANTE: recalcular stats tras reset
         applyUpgradeEffect(player);
     }
+
+    public void syncUpgradeLevels(Player player) {
+
+        for (Upgrade u : upgrades) {
+
+            Integer savedLevel = player.getUpgradesMap()
+                    .get(u.getType().name());
+
+            if (savedLevel == null) {
+                savedLevel = 0;
+            }
+
+            u.reset();
+
+            for (int i = 0; i < savedLevel; i++) {
+                u.levelUp();
+            }
+        }
+
+        applyUpgradeEffect(player);
+    }
+
 }

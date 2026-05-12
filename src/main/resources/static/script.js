@@ -1,28 +1,88 @@
 let coins = 0;
 const achievementAudio = new Audio("achievement.mp3");
-const unlockedAchievements = new Set();
+
+// 🔥 DESBLOQUEO DE AUDIO (Chrome)
+let audioUnlocked = false;
+document.addEventListener("click", () => {
+    if (!audioUnlocked) {
+        achievementAudio.play().then(() => {
+            achievementAudio.pause();
+            achievementAudio.currentTime = 0;
+            audioUnlocked = true;
+        }).catch(() => {});
+    }
+}, { once: true });
+
+// 🔥 persistencia
+const unlockedAchievements = new Set(
+    JSON.parse(localStorage.getItem("unlockedAchievements")) || []
+);
+
+// 🔥 CONTROL DE LOGROS (NUEVO)
+let achievementsReady = false;
+
+// 🔥 reset logros
+function resetAchievements(){
+    localStorage.removeItem("unlockedAchievements");
+    unlockedAchievements.clear();
+    achievementsReady = false;
+}
+
+// 💡 HINT AJUSTES (SOLO PRIMERA VEZ)
+function showSettingsHint(){
+    const seen = localStorage.getItem("settingsHintShown");
+    if (seen) return;
+
+    const hint = document.createElement("div");
+    hint.className = "settings-hint";
+    hint.innerHTML = "💡 Ajustes (⚙️) → aquí puedes guardar tu partida";
+
+    document.body.appendChild(hint);
+
+    setTimeout(() => hint.classList.add("visible"), 100);
+
+    setTimeout(() => {
+        hint.classList.remove("visible");
+        setTimeout(() => hint.remove(), 500);
+    }, 4000);
+
+    localStorage.setItem("settingsHintShown", "true");
+}
 
 // --- Mostrar panel de logros ---
 const achievementButton = document.getElementById("achievement-button");
 const achievementPanel = document.getElementById("achievement-panel");
+
 achievementButton.addEventListener("click", () => {
     achievementPanel.classList.toggle("hidden");
 });
 
-// --- Mostrar toast logros ---
+// --- ⚙️ AJUSTES ---
+const settingsButton = document.getElementById("settings-button");
+const settingsPanel = document.getElementById("settings-panel");
+
+if (settingsButton && settingsPanel) {
+    settingsButton.addEventListener("click", () => {
+        settingsPanel.classList.toggle("hidden");
+    });
+}
+
+// --- toast ---
 function showAchievementToast(name, description) {
     const toast = document.createElement("div");
     toast.className = "achievement-toast";
     toast.innerHTML = `<b>${name}</b><br>${description}`;
     document.body.appendChild(toast);
+
     setTimeout(() => toast.classList.add("visible"), 100);
+
     setTimeout(() => {
         toast.classList.remove("visible");
         setTimeout(() => toast.remove(), 500);
     }, 3000);
 }
 
-// --- Formatear números ---
+// --- formato números ---
 function formatNumber(value){
     if(value < 1000) return value.toString();
     const units = ["","K","M","B","T"];
@@ -31,7 +91,87 @@ function formatNumber(value){
     return scaled.toFixed(2)+units[i];
 }
 
-// --- Cargar estado del juego ---
+// --- EXPORT ---
+async function exportSave(){
+    const res = await fetch("/api/game/save/export");
+    const data = await res.json();
+
+    const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+
+    // 🔥 nombre con fecha
+    const now = new Date();
+    const fecha =
+        now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, '0') + "-" +
+        String(now.getDate()).padStart(2, '0') + "_" +
+        String(now.getHours()).padStart(2, '0') + "-" +
+        String(now.getMinutes()).padStart(2, '0');
+
+    a.download = `save_${fecha}.json`;
+
+    a.click();
+}
+
+// --- 📂 IMPORT SAVE (NUEVO) ---
+function importSave(){
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+
+    input.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+
+            await fetch("/api/game/save/import", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            resetAchievements(); // 🔥 evita desync visual
+
+            location.reload();
+
+        } catch (err) {
+            alert("Archivo inválido");
+        }
+    });
+
+    input.click();
+}
+
+// --- NEW GAME ---
+function newGame(){
+    if(!confirm("¿Seguro que quieres empezar una nueva partida?")){
+        return;
+    }
+
+    // 🔥 limpiar logros del navegador
+    resetAchievements();
+
+    // 🔥 seguridad extra (por si acaso)
+    localStorage.removeItem("unlockedAchievements");
+
+    // 🔥 FIX CLAVE
+    achievementsReady = false;
+
+    fetch("/api/game/reset",{method:"POST"})
+        .then(() => {
+            location.reload();
+        });
+}
+
+// --- GAME STATE ---
 async function loadGameState(){
     const response = await fetch("/api/game/state");
     const player = await response.json();
@@ -42,10 +182,10 @@ async function loadGameState(){
     document.getElementById("prestigeRequirement").textContent = formatNumber(player.prestigeRequirement);
 
     if(player.skillTree){
-        document.getElementById("prestige-skill-points").textContent = player.skillTree.availablePrestigePoints;
+        document.getElementById("prestige-skill-points").textContent =
+            player.skillTree.availablePrestigePoints;
     }
 
-    // Barra prestige
     let percent = 0;
     if(player.prestigeRequirement > 0){
         percent = (player.coinsThisRun / player.prestigeRequirement) * 100;
@@ -63,32 +203,60 @@ async function loadGameState(){
     }
 }
 
-// --- LOGROS (NUEVO: LLAMADA SEPARADA) ---
+// --- LOGROS ---
 async function loadAchievements(){
     const response = await fetch("/api/game/achievements");
     const achievements = await response.json();
 
     achievementPanel.innerHTML = "";
 
+    if (!achievementsReady) {
+        achievements.forEach(a => {
+            if (a.unlocked) {
+                unlockedAchievements.add(a.name);
+            }
+        });
+
+        localStorage.setItem(
+            "unlockedAchievements",
+            JSON.stringify([...unlockedAchievements])
+        );
+
+        achievementsReady = true;
+    }
+
     achievements.forEach(a => {
 
         const id = a.name;
-        const name = a.name;
-        const description = a.description;
 
-        // Toast
-        if(a.unlocked && !unlockedAchievements.has(id)){
+        if (
+            achievementsReady &&
+            a.unlocked &&
+            !unlockedAchievements.has(id)
+        ){
             unlockedAchievements.add(id);
+
+            localStorage.setItem(
+                "unlockedAchievements",
+                JSON.stringify([...unlockedAchievements])
+            );
+
+            achievementAudio.pause();
             achievementAudio.currentTime = 0;
-            achievementAudio.play();
-            showAchievementToast(name, description);
+
+            achievementAudio.play().catch(() => {
+                setTimeout(() => {
+                    achievementAudio.play().catch(() => {});
+                }, 50);
+            });
+
+            showAchievementToast(a.name, a.description);
         }
 
-        // Panel
         const div = document.createElement("div");
         div.innerHTML = `
-            <b>${name}</b><br>
-            ${description}<br>
+            <b>${a.name}</b><br>
+            ${a.description}<br>
             Status: ${a.unlocked ? "✅" : "❌"}
             <hr>
         `;
@@ -96,21 +264,21 @@ async function loadAchievements(){
     });
 }
 
-// --- Click ---
+// --- CLICK ---
 document.getElementById("coin-button").addEventListener("click", async () => {
     const response = await fetch("/api/game/click",{method:"POST"});
     const player = await response.json();
     document.getElementById("coins").textContent = formatNumber(player.currentCoins);
 });
 
-// --- Prestige ---
+// --- PRESTIGE ---
 async function prestige(){
     await fetch("/api/game/prestige",{method:"POST"});
     window.location.href = "skill-tree.html";
 }
 document.getElementById("prestige-button").addEventListener("click", prestige);
 
-// --- Upgrades ---
+// --- UPGRADES ---
 async function loadUpgrades(){
     const response = await fetch("/api/upgrades");
     const upgrades = await response.json();
@@ -136,7 +304,7 @@ async function buyUpgrade(index){
     await loadUpgrades();
 }
 
-// --- Skills ---
+// --- SKILLS ---
 async function loadSkills(){
     const container = document.getElementById("skill-tree");
     if(!container) return;
@@ -166,7 +334,7 @@ async function buySkill(index){
     await loadSkills();
 }
 
-// --- Tabs ---
+// --- TABS ---
 function showTab(tabId){
     document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
     document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
@@ -179,10 +347,13 @@ function showTab(tabId){
     if(btn) btn.classList.add("active");
 }
 
-// --- Inicializar ---
+// --- INIT ---
 loadGameState();
 loadUpgrades();
 loadSkills();
 loadAchievements();
+
+showSettingsHint();
+
 setInterval(loadGameState, 1000);
 setInterval(loadAchievements, 1000);

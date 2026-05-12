@@ -192,3 +192,50 @@ body{
 .hidden{
     display:none !important;
 }
+
+/* ⚙️ BOTÓN AJUSTES */
+#settings-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 26px;
+    cursor: pointer;
+    z-index: 20;
+}
+
+/* 📦 PANEL AJUSTES */
+#settings-panel {
+    position: fixed;
+    top: 45px;
+    right: 10px;
+    width: 180px;
+    background: #2a2a2a;
+    border: 2px solid gold;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 20;
+}
+
+/* botones dentro */
+#settings-panel button {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#settings-panel button:hover {
+    background: #555;
+}
+
+/* 🔥 pequeño añadido opcional UX (primera vez ajustes) */
+#settings-panel h3 {
+    margin: 0;
+    font-size: 14px;
+    color: gold;
+}

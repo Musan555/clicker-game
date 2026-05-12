@@ -66,4 +66,18 @@ public class GameController {
     public List<AchievementDTO> getAchievements() {
         return gameService.getAchievements();
     }
+
+    @GetMapping("/save/export")
+    public Player exportSave() {
+        return gameService.getPlayerData();
+    }
+
+    @PostMapping("/reset")
+    public void resetGame() {
+        gameService.resetGame();
+    }
+    @PostMapping("/save/import")
+    public void importSave(@RequestBody Player player) {
+        gameService.importSave(player);
+    }
 }

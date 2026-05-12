@@ -33,7 +33,7 @@ public class Player {
     private SkillTree skillTree;
 
     // Upgrades comprados
-    private Map<Upgrade, Integer> upgrades = new HashMap<>();
+    private Map<String, Integer> upgrades = new HashMap<>();
 
     // 🔥 LOGROS
     private List<Achievement> achievements = new ArrayList<>();
@@ -75,14 +75,15 @@ public class Player {
     // ---------- UPGRADES ----------
 
     public void addUpgrade(Upgrade upgrade) {
-        upgrades.put(upgrade, upgrades.getOrDefault(upgrade, 0) + 1);
+        String id = upgrade.getType().name();
+        upgrades.put(id, upgrades.getOrDefault(id, 0) + 1);
     }
 
     public int getTotalUpgradesBought() {
         return upgrades.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public Map<Upgrade, Integer> getUpgradesMap() {
+    public Map<String, Integer> getUpgradesMap() {
         return upgrades;
     }
 
@@ -138,4 +139,35 @@ public class Player {
         this.coinsPerClick = 1;
         this.passiveBonus = 0;
     }
+
+    // ---------- FULL RESET (NUEVA PARTIDA REAL) ----------
+    public void fullReset() {
+
+        this.currentCoins = 0;
+        this.totalCoinsEarned = 0;
+        this.coinsThisRun = 0;
+
+        this.totalClicks = 0;
+
+        this.prestigePoints = 0;
+        this.prestigeProgress = 0;
+        this.prestigeRequirement = 2_000_000;
+        this.resetsCount = 0;
+
+        this.coinsPerClick = 1;
+        this.passiveBonus = 0;
+
+        // 🔥 RESET SKILLS
+        this.skillTree = new SkillTree();
+
+        // 🔥 RESET UPGRADES
+        this.upgrades.clear();
+
+        // 🔥 RESET LOGROS (LA CLAVE REAL)
+        this.achievements.clear();
+        for (AchievementType type : AchievementType.values()) {
+            this.achievements.add(new Achievement(type));
+        }
+    }
+
 }

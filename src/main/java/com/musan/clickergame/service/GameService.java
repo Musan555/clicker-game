@@ -143,16 +143,12 @@ public class GameService {
     // ---------- LOGROS ----------
     private void checkAchievements() {
 
-        int totalUpgrades = upgradeService.getUpgrades().size();
-        int boughtUpgrades = player.getTotalUpgradesBought();
-
         for (Achievement a : player.getAchievements()) {
 
             if (a.isUnlocked()) continue;
 
             switch (a.getType()) {
 
-                // ---------- MONEDAS ----------
                 case FIRST_CLICK:
                     if (player.getTotalCoinsEarned() >= 1) a.unlock();
                     break;
@@ -177,12 +173,9 @@ public class GameService {
                     if (player.getTotalCoinsEarned() >= 1_000_000_000_000_000L) a.unlock();
                     break;
 
-                // ---------- PRESTIGE ----------
                 case FIRST_PRESTIGE_POINT:
                     if (player.getPrestigePoints() >= 1) a.unlock();
                     break;
-
-                // ---------- UPGRADES ----------
 
                 case UPGRADE_BEGINNER:
                     if (player.getUpgradesMap().values()
@@ -214,7 +207,6 @@ public class GameService {
                     }
                     break;
 
-                // ---------- SKILLS ----------
                 case SKILL_TREE_BEGINNER:
                     if (player.getSkillTree().getSkills()
                             .stream()
@@ -234,11 +226,51 @@ public class GameService {
         }
     }
 
-    // ✅ Devuelve logros listos para JS (name, description, unlocked)
+    // ---------- RESET GAME ----------
+    public void resetGame() {
+        player.fullReset();
+        upgradeService.syncUpgradeLevels(player);
+    }
+
+    // Devuelve logros listos para JS
     public List<AchievementDTO> getAchievements() {
-        checkAchievements(); // 🔥 ESTO ES LO IMPORTANTE
+        checkAchievements();
         return player.getAchievements().stream()
                 .map(AchievementDTO::new)
                 .toList();
+    }
+
+    // ---------- IMPORT SAVE ----------
+    public void importSave(Player imported) {
+
+        // 🧪 DEBUG PRUEBA RÁPIDA
+        System.out.println("IMPORT COINS -> " + imported.getCurrentCoins());
+        System.out.println("PLAYER BEFORE -> " + this.player.getCurrentCoins());
+
+        this.player.setCurrentCoins(imported.getCurrentCoins());
+        this.player.setTotalCoinsEarned(imported.getTotalCoinsEarned());
+        this.player.setCoinsThisRun(imported.getCoinsThisRun());
+
+        this.player.setPrestigePoints(imported.getPrestigePoints());
+        this.player.setPrestigeRequirement(imported.getPrestigeRequirement());
+        this.player.setResetsCount(imported.getResetsCount());
+
+        this.player.setCoinsPerClick(imported.getCoinsPerClick());
+        this.player.setPassiveBonus(imported.getPassiveBonus());
+
+        this.player.getUpgradesMap().clear();
+        this.player.getUpgradesMap().putAll(imported.getUpgradesMap());
+        upgradeService.syncUpgradeLevels(this.player);
+
+        this.player.setSkillTree(imported.getSkillTree());
+
+        // NO importamos achievements desde JSON
+        // se recalculan en runtime
+        this.player.getAchievements().clear();
+        for (AchievementType type : AchievementType.values()) {
+            this.player.getAchievements().add(new Achievement(type));
+        }
+        // 🔥 MUY IMPORTANTE para evitar bugs raros
+        this.lastUpdateTime = System.currentTimeMillis();
     }
 }

@@ -12,6 +12,18 @@
 <header id="top-bar">
     <span id="coins">0</span> $
 </header>
+<!-- ⚙️ BOTÓN AJUSTES -->
+<div id="settings-button">⚙️</div>
+
+<!-- 📦 PANEL AJUSTES -->
+<div id="settings-panel" class="hidden">
+    <h3>Ajustes</h3>
+    <button onclick="exportSave()">💾 Guardar partida</button>
+    <button onclick="importSave()">📂 Cargar partida</button>
+    <button onclick="newGame()">🆕 Nueva partida</button>
+    <!-- 🔥 INPUT OCULTO PARA IMPORT -->
+    <input type="file" id="importFile" accept=".json" style="display:none">
+</div>
 
 <div id="game-container">
     <div id="center-area">

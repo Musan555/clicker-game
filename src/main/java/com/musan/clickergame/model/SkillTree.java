@@ -57,4 +57,12 @@ public class SkillTree {
     public void setAvailablePrestigePoints(int availablePrestigePoints) {
         this.availablePrestigePoints = availablePrestigePoints;
     }
+
+    public void reset() {
+        this.availablePrestigePoints = 0;
+
+        for (Skill skill : skills) {
+            skill.setLevel(0);
+        }
+    }
 }
