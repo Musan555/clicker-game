@@ -2,7 +2,7 @@ package com.musan.clickergame.model;
 
 public enum UpgradeType {
 
-    MEJORA_1(UpgradeCategory.ACTIVE, 10, 10000),
+    MEJORA_1(UpgradeCategory.ACTIVE, 10, 1),
     MEJORA_2(UpgradeCategory.PASSIVE, 50, 1),
     MEJORA_3(UpgradeCategory.PASSIVE, 100, 2),
     MEJORA_4(UpgradeCategory.PASSIVE, 250, 3),

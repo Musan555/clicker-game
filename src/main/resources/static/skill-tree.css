@@ -1,0 +1,259 @@
+/* =========================
+   RESET
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#050505;
+    color:white;
+    overflow:hidden;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+#top-bar{
+    height:45px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border-bottom:1px solid #2a2a2a;
+
+    background:#000;
+
+    font-size:32px;
+    font-weight:bold;
+
+    color:#ffd400;
+}
+
+/* =========================
+   SKILL TREE CONTAINER
+========================= */
+
+#skill-tree-container{
+    width:100%;
+    height:calc(100vh - 150px);
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+
+    padding-top:15px;
+}
+
+/* =========================
+   GRID
+========================= */
+
+#skill-tree{
+    width:1200px;
+
+    display:grid;
+
+    grid-template-columns:
+        210px
+        210px
+        210px;
+
+    grid-template-rows:
+        130px
+        130px
+        130px
+        130px;
+
+    justify-content:center;
+
+    gap:35px 120px;
+}
+
+/* =========================
+   SKILLS
+========================= */
+
+.skill{
+    background:#080808;
+
+    border:1px solid #5b4300;
+    border-radius:18px;
+
+    padding:10px;
+
+    text-align:center;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    position:relative;
+
+    font-size:13px;
+}
+
+.skill b{
+    color:#ffd400;
+    font-size:15px;
+}
+
+.skill button{
+    margin-top:8px;
+
+    height:34px;
+
+    border:none;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:13px;
+    font-weight:bold;
+
+    background:
+        linear-gradient(
+            #e5be2f,
+            #bf9300
+        );
+
+    color:black;
+}
+
+.skill button:hover{
+    filter:brightness(1.05);
+}
+
+/* =========================
+   POSICIONES
+========================= */
+
+/* CLICK */
+
+.click1{
+    grid-column:1;
+    grid-row:1;
+}
+
+.click2{
+    grid-column:1;
+    grid-row:2;
+}
+
+.click3{
+    grid-column:1;
+    grid-row:3;
+}
+
+/* MULTI */
+
+.multi1{
+    grid-column:2;
+    grid-row:1;
+}
+
+.multi2{
+    grid-column:2;
+    grid-row:2;
+}
+
+.discount{
+    grid-column:2;
+    grid-row:3;
+}
+
+/* PASSIVE */
+
+.passive1{
+    grid-column:3;
+    grid-row:1;
+}
+
+.passive2{
+    grid-column:3;
+    grid-row:2;
+}
+
+.passive3{
+    grid-column:3;
+    grid-row:3;
+}
+
+/* ULTIMATE */
+
+.ultimate{
+    grid-column:2;
+    grid-row:4;
+
+    margin-top:-10px;
+
+    border:2px solid #d4af37;
+
+    box-shadow:
+        0 0 15px rgba(255,215,0,0.20);
+}
+
+/* =========================
+   LINEAS
+========================= */
+
+.click2::before,
+.click3::before,
+.multi2::before,
+.discount::before,
+.passive2::before,
+.passive3::before{
+    content:"";
+
+    position:absolute;
+
+    width:3px;
+    height:35px;
+
+    background:#7f5b00;
+
+    top:-35px;
+    left:50%;
+
+    transform:translateX(-50%);
+}
+
+/* =========================
+   BOTON VOLVER
+========================= */
+
+#back-to-game{
+    position:fixed;
+
+    bottom:20px;
+    left:20px;
+
+    width:220px;
+    height:50px;
+
+    border:none;
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:16px;
+    font-weight:bold;
+
+    background:
+        linear-gradient(
+            #e5be2f,
+            #bf9300
+        );
+
+    color:black;
+}
+
+#back-to-game:hover{
+    filter:brightness(1.05);
+}

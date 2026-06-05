@@ -28,27 +28,6 @@ function resetAchievements(){
     achievementsReady = false;
 }
 
-// 💡 HINT AJUSTES (SOLO PRIMERA VEZ)
-function showSettingsHint(){
-    const seen = localStorage.getItem("settingsHintShown");
-    if (seen) return;
-
-    const hint = document.createElement("div");
-    hint.className = "settings-hint";
-    hint.innerHTML = "💡 Ajustes (⚙️) → aquí puedes guardar tu partida";
-
-    document.body.appendChild(hint);
-
-    setTimeout(() => hint.classList.add("visible"), 100);
-
-    setTimeout(() => {
-        hint.classList.remove("visible");
-        setTimeout(() => hint.remove(), 500);
-    }, 4000);
-
-    localStorage.setItem("settingsHintShown", "true");
-}
-
 // --- Mostrar panel de logros ---
 const achievementButton = document.getElementById("achievement-button");
 const achievementPanel = document.getElementById("achievement-panel");
@@ -186,6 +165,26 @@ async function loadGameState(){
             player.skillTree.availablePrestigePoints;
     }
 
+    // ESTADÍSTICAS
+    document.getElementById("stat-clicks").textContent =
+        formatNumber(player.totalClicks);
+
+    document.getElementById("stat-cpc").textContent =
+        formatNumber(player.coinsPerClick);
+
+    document.getElementById("stat-cps").textContent =
+        formatNumber(player.passiveBonus);
+
+    document.getElementById("stat-total").textContent =
+        formatNumber(player.totalCoinsEarned);
+
+    document.getElementById("stat-prestige").textContent =
+        formatNumber(player.prestigePoints);
+
+    document.getElementById("stat-resets").textContent =
+        formatNumber(player.resetsCount);
+
+    // PROGRESO PRESTIGE
     let percent = 0;
     if(player.prestigeRequirement > 0){
         percent = (player.coinsThisRun / player.prestigeRequirement) * 100;
@@ -282,18 +281,28 @@ document.getElementById("prestige-button").addEventListener("click", prestige);
 async function loadUpgrades(){
     const response = await fetch("/api/upgrades");
     const upgrades = await response.json();
+
+
     const container = document.getElementById("upgrade-list");
     container.innerHTML = "";
 
     upgrades.forEach((u,index)=>{
+
         const div = document.createElement("div");
         div.className = "upgrade";
+        const currentValue = u.level * u.effectValue;
         div.innerHTML = `
             <b>${u.name}</b><br>
+
             Nivel: ${u.level}/${u.maxLevel}<br>
-            Precio: ${formatNumber(u.cost)} $<br>
+
+            Mejora: +${formatNumber(u.effectValue)} por nivel<br>
+
+            Precio: ${formatNumber(u.cost)} $<br><br>
+
             <button onclick="buyUpgrade(${index})">Comprar</button>
         `;
+
         container.appendChild(div);
     });
 }
@@ -352,8 +361,6 @@ loadGameState();
 loadUpgrades();
 loadSkills();
 loadAchievements();
-
-showSettingsHint();
 
 setInterval(loadGameState, 1000);
 setInterval(loadAchievements, 1000);

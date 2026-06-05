@@ -33,7 +33,8 @@ public class UpgradeController {
                         u.getDescription(),
                         u.getLevel(),
                         u.getMaxLevel(),
-                        upgradeService.calculateCurrentCost(u)
+                        upgradeService.calculateCurrentCost(u),
+                        u.getEffectValue()
                 ))
                 .toList();
     }
